@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/tunx321/movie/internal/db"
@@ -10,15 +9,15 @@ import (
 func Run() error {
 	fmt.Println("starting up our appplication")
 	db, err := db.NewDatabase()
-	if err != nil{
+	if err != nil {
 		fmt.Println("failed to ping to database")
 		return err
 	}
 
-	if err := db.Ping(context.Background()); err != nil{
+	if err := db.MigrateDB(); err != nil {
+		fmt.Println("dailed to migrate database")
 		return err
 	}
-
 	fmt.Println("successfully connected and pinged database")
 	return nil
 }
