@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 )
 
 var (
@@ -17,12 +16,13 @@ type Movie struct {
 	Slug        string
 	Description string
 	Producer    string
-	Duration    time.Duration
+	Duration    string
 	Author      string
 }
 
 type Store interface {
 	GetMovie(context.Context, string) (Movie, error)
+	CreateMovie(context.Context, Movie) (Movie, error)
 }
 
 type Service struct {
@@ -55,5 +55,9 @@ func (s *Service) DeleteMovie(ctx context.Context, mv Movie) error {
 }
 
 func (s *Service) CreateMovie(ctx context.Context, mv Movie) (Movie, error) {
-	return Movie{},fmt.Errorf("not implemented")
+	insertedMv, err := s.Store.CreateMovie(ctx, mv)
+	if err != nil {
+		return Movie{}, err
+	}
+	return insertedMv, nil
 }

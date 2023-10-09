@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS movies (
     Slug text,
     Descript text,
     Producer text,
-    Duration interval,
+    Duration text,
     Author text
 );
 
