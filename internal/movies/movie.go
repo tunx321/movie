@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
+
 )
 
 var (
@@ -23,6 +25,8 @@ type Movie struct {
 type Store interface {
 	GetMovie(context.Context, string) (Movie, error)
 	CreateMovie(context.Context, Movie) (Movie, error)
+	DeleteMovie(context.Context, string) error
+	UpdateMovie(context.Context, string,  Movie) (Movie, error)
 }
 
 type Service struct {
@@ -46,12 +50,17 @@ func (s *Service) GetMovie(ctx context.Context, id string) (Movie, error) {
 	return mv, nil
 }
 
-func (s *Service) UpdateMovie(ctx context.Context, mv Movie) error {
-	return fmt.Errorf("not implemented")
+func (s *Service) UpdateMovie(ctx context.Context,id string, updatedMv Movie) (Movie, error) {
+	mv, err :=s.Store.UpdateMovie(ctx, id, updatedMv)
+	if err != nil{
+		fmt.Println("error updating movie")
+		return Movie{}, err
+	}
+	return mv, nil
 }
 
-func (s *Service) DeleteMovie(ctx context.Context, mv Movie) error {
-	return fmt.Errorf("not implemented")
+func (s *Service) DeleteMovie(ctx context.Context, id string) error {
+	return s.Store.DeleteMovie(ctx, id)
 }
 
 func (s *Service) CreateMovie(ctx context.Context, mv Movie) (Movie, error) {

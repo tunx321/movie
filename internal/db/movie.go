@@ -67,3 +67,52 @@ func (d *Database) CreateMovie(ctx context.Context, mv movies.Movie) (movies.Mov
 	}
 	return mv, nil
 }
+
+
+func (d *Database) DeleteMovie(ctx context.Context, id string) error{
+	row, err := d.Client.NamedQueryContext(ctx, 
+	`DELETE FROM movies WHERE id = $1`, id)
+
+	if err != nil{
+		return fmt.Errorf("failed to delete movie: %w", err)
+	}
+	if err := row.Close(); err != nil{
+		return fmt.Errorf("failed to close rows: %w", err)
+	}
+	return nil
+}
+
+func (d *Database) UpdateMovie(ctx context.Context, id string, mv movies.Movie) (movies.Movie, error){
+	cmtRow := MovieRow{
+			ID:          id,
+			Title:       sql.NullString{String: mv.Author, Valid: true},
+			Slug:        sql.NullString{String: mv.Slug, Valid: true},
+			Description: sql.NullString{String: mv.Description, Valid: true},
+			Producer:    sql.NullString{String: mv.Producer, Valid: true},
+			Duration:    sql.NullString{String: mv.Duration, Valid: true},
+			Author:      sql.NullString{String: mv.Author, Valid: true},
+		
+	}
+	rows, err := d.Client.NamedQueryContext(
+		ctx, 
+		`UPDATE comments SET
+		title = :title,
+		slug = :slug,
+		descript = :description,
+		producer = :producer,
+		duration = :duration,
+		author = :author
+		WHERE id = :id `,
+		cmtRow,
+	)
+
+	if err != nil{
+		return movies.Movie{}, fmt.Errorf("failed to update comment: %w", err) 
+	}
+
+	if err := rows.Close(); err != nil{
+		return movies.Movie{}, fmt.Errorf("failed to close rows: %w", err)
+	}
+
+	return convertMovieRowToMovie(cmtRow), nil
+}
