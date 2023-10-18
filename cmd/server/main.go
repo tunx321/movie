@@ -1,11 +1,11 @@
 package main
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/tunx321/movie/internal/db"
 	"github.com/tunx321/movie/internal/movies"
+	transportHttp "github.com/tunx321/movie/internal/transport/http"
 )
 
 func Run() error {
@@ -22,21 +22,10 @@ func Run() error {
 	}
 	mvService := movies.NewService(db)
 
-	_, err = mvService.CreateMovie(context.Background(), 
-	movies.Movie{
-		Title: "testing2",
-		Slug: "test2",
-		Producer: "Almat2",
-		Author: "Alma2t",
-		Description: "Testing database2",
-	},
-	)
-	if err != nil{
-		fmt.Println(err)
+	httpHandler := transportHttp.NewHandler(mvService)
+	if err := httpHandler.Serve(); err != nil {
+		return err
 	}
-
-	fmt.Println(mvService.GetMovie(context.Background(), "3654bcbf-57b6-4e66-86b5-87fb9790f8a9"))
-	fmt.Println("successfully connected and pinged database")
 	return nil
 }
 
