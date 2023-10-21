@@ -56,12 +56,14 @@ func (d *Database) CreateMovie(ctx context.Context, mv movies.Movie) (movies.Mov
 		Author:      sql.NullString{String: mv.Author, Valid: true},
 	}
 
-	_, err := d.Client.ExecContext(ctx,
-		`INSERT INTO movies (id, title, slug, descript, producer, duration, author) VALUES (:id, :title, :slug, :description, :producer, :duration, :author)`,
-		createRow)
+	err := d.Client.QueryRowContext(ctx,
+		`INSERT INTO movies (id, title, slug, descript, producer, duration, author) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, title, slug, descript, producer, duration, author`,
+		createRow.ID, createRow.Title, createRow.Slug, createRow.Description, createRow.Producer, createRow.Duration, createRow.Author).Scan(&mv.ID, &mv.Title, &mv.Slug, &mv.Description, &mv.Producer, &mv.Duration, &mv.Author)
+	
 	if err != nil {
 		return movies.Movie{}, fmt.Errorf("failed to insert movie: %w", err)
 	}
+
 
 	return mv, nil
 }
@@ -79,7 +81,7 @@ func (d *Database) DeleteMovie(ctx context.Context, id string) error{
 }
 
 func (d *Database) UpdateMovie(ctx context.Context, id string, mv movies.Movie) (movies.Movie, error){
-	cmtRow := MovieRow{
+	mvRow := MovieRow{
 			ID:          id,
 			Title:       sql.NullString{String: mv.Author, Valid: true},
 			Slug:        sql.NullString{String: mv.Slug, Valid: true},
@@ -89,24 +91,24 @@ func (d *Database) UpdateMovie(ctx context.Context, id string, mv movies.Movie) 
 			Author:      sql.NullString{String: mv.Author, Valid: true},
 		
 	}
-	_, err := d.Client.ExecContext(
+	err := d.Client.QueryRowContext(
 		ctx, 
-		`UPDATE comments SET
-		title = :title,
-		slug = :slug,
-		descript = :description,
-		producer = :producer,
-		duration = :duration,
-		author = :author
-		WHERE id = :id `,
-		cmtRow,
-	)
+		`UPDATE movies SET
+		title = $1,
+		slug = $2,
+		descript = $3,
+		producer = $4,
+		duration = $5,
+		author = $6
+		WHERE id = $7 RETURNING title, slug, descript, producer, duration, author`,
+		mvRow.Title, mvRow.Slug, mvRow.Description, mvRow.Producer, mvRow.Duration, mvRow.Author, mvRow.ID,
+	).Scan(&mvRow.Title, &mvRow.Slug, &mvRow.Description, &mvRow.Producer, &mvRow.Duration, &mvRow.Author)
 
 	if err != nil{
-		return movies.Movie{}, fmt.Errorf("failed to update comment: %w", err) 
+		return movies.Movie{}, fmt.Errorf("failed to update movies: %w", err) 
 	}
 
 
 
-	return convertMovieRowToMovie(cmtRow), nil
+	return convertMovieRowToMovie(mvRow), nil
 }

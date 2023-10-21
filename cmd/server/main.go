@@ -17,7 +17,7 @@ func Run() error {
 	}
 
 	if err := db.MigrateDB(); err != nil {
-		fmt.Println("dailed to migrate database")
+		fmt.Println("failed to migrate database")
 		return err
 	}
 	mvService := movies.NewService(db)
