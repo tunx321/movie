@@ -12,7 +12,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type MovieService interface{}
+
 
 
 type Handler struct{
@@ -40,6 +40,10 @@ func (h *Handler) mapRoutes(){
 	h.Router.HandleFunc("/hello", func (w http.ResponseWriter, r *http.Request){
 		fmt.Fprint(w, "Hello World")
 	}  )
+	h.Router.HandleFunc("/api/v1/movie", h.CreateMovie).Methods("POST")
+	h.Router.HandleFunc("/api/v1/movie/{id}", h.GetMovie).Methods("GET")
+	h.Router.HandleFunc("/api/v1/movie/{id}", h.UpdateMovie).Methods("PUT")
+	h.Router.HandleFunc("/api/v1/movie/{id}", h.DeleteMovie).Methods("DELETE")
 }
 
 

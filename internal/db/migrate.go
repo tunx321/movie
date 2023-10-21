@@ -13,7 +13,7 @@ import (
 func (d *Database) MigrateDB() error {
 	fmt.Println("migrating out database")
 
-	driver, err := postgres.WithInstance(d.Client.DB, &postgres.Config{}) 
+	driver, err := postgres.WithInstance(d.Client, &postgres.Config{}) 
 	if err != nil{
 		return fmt.Errorf("could not connect the postgres driver: %w", err)
 	}

@@ -2,16 +2,16 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"os"
 
-	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
 
 type Database struct{
-	Client *sqlx.DB
+	Client *sql.DB
 }
 
 
@@ -26,7 +26,7 @@ func NewDatabase()(*Database, error){
 		os.Getenv("SSL_MODE"),
 	)
 
-	dbConn, err := sqlx.Connect("postgres", connString)
+	dbConn, err := sql.Open("postgres", connString)
 	if err != nil{
 		return &Database{}, fmt.Errorf("failed to connect to database")
 	}

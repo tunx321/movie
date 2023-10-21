@@ -56,29 +56,25 @@ func (d *Database) CreateMovie(ctx context.Context, mv movies.Movie) (movies.Mov
 		Author:      sql.NullString{String: mv.Author, Valid: true},
 	}
 
-	rows, err := d.Client.NamedQueryContext(ctx,
+	_, err := d.Client.ExecContext(ctx,
 		`INSERT INTO movies (id, title, slug, descript, producer, duration, author) VALUES (:id, :title, :slug, :description, :producer, :duration, :author)`,
 		createRow)
 	if err != nil {
 		return movies.Movie{}, fmt.Errorf("failed to insert movie: %w", err)
 	}
-	if err := rows.Close(); err != nil {
-		return movies.Movie{}, fmt.Errorf("failed to close rows: %w", err)
-	}
+
 	return mv, nil
 }
 
 
 func (d *Database) DeleteMovie(ctx context.Context, id string) error{
-	row, err := d.Client.NamedQueryContext(ctx, 
+	_, err := d.Client.ExecContext(ctx, 
 	`DELETE FROM movies WHERE id = $1`, id)
 
 	if err != nil{
 		return fmt.Errorf("failed to delete movie: %w", err)
 	}
-	if err := row.Close(); err != nil{
-		return fmt.Errorf("failed to close rows: %w", err)
-	}
+
 	return nil
 }
 
@@ -93,7 +89,7 @@ func (d *Database) UpdateMovie(ctx context.Context, id string, mv movies.Movie) 
 			Author:      sql.NullString{String: mv.Author, Valid: true},
 		
 	}
-	rows, err := d.Client.NamedQueryContext(
+	_, err := d.Client.ExecContext(
 		ctx, 
 		`UPDATE comments SET
 		title = :title,
@@ -110,9 +106,7 @@ func (d *Database) UpdateMovie(ctx context.Context, id string, mv movies.Movie) 
 		return movies.Movie{}, fmt.Errorf("failed to update comment: %w", err) 
 	}
 
-	if err := rows.Close(); err != nil{
-		return movies.Movie{}, fmt.Errorf("failed to close rows: %w", err)
-	}
+
 
 	return convertMovieRowToMovie(cmtRow), nil
 }
