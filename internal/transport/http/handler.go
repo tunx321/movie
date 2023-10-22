@@ -30,6 +30,7 @@ func NewHandler(service MovieService) *Handler{
 	h.mapRoutes()
 	h.Router.Use(JSONMiddleware)
 	h.Router.Use(LoggingMiddleware)
+	h.Router.Use(TimeoutMiddleware)
 	h.Server = &http.Server{
 		Addr: ":8080",
 		Handler: h.Router,
