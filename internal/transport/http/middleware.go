@@ -23,7 +23,6 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 }
 
 
-
 func TimeoutMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel := context.WithTimeout(r.Context(), 15*time.Second)
@@ -31,3 +30,6 @@ func TimeoutMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
+
+
+

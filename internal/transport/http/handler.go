@@ -43,10 +43,10 @@ func (h *Handler) mapRoutes(){
 	h.Router.HandleFunc("/hello", func (w http.ResponseWriter, r *http.Request){
 		fmt.Fprint(w, "Hello World")
 	}  )
-	h.Router.HandleFunc("/api/v1/movie", h.CreateMovie).Methods("POST")
+	h.Router.HandleFunc("/api/v1/movie", JWTAuth(h.CreateMovie)).Methods("POST")
 	h.Router.HandleFunc("/api/v1/movie/{id}", h.GetMovie).Methods("GET")
-	h.Router.HandleFunc("/api/v1/movie/{id}", h.UpdateMovie).Methods("PUT")
-	h.Router.HandleFunc("/api/v1/movie/{id}", h.DeleteMovie).Methods("DELETE")
+	h.Router.HandleFunc("/api/v1/movie/{id}", JWTAuth(h.UpdateMovie)).Methods("PUT")
+	h.Router.HandleFunc("/api/v1/movie/{id}", JWTAuth(h.DeleteMovie)).Methods("DELETE")
 }
 
 

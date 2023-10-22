@@ -3,6 +3,7 @@ module github.com/tunx321/movie
 go 1.21.1
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/golang-migrate/migrate/v4 v4.16.2 // indirect
 	github.com/google/uuid v1.3.1 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
