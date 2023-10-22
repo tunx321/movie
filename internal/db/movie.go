@@ -48,7 +48,7 @@ func (d *Database) CreateMovie(ctx context.Context, mv movies.Movie) (movies.Mov
 	mv.ID = uuid.New().String()
 	createRow := MovieRow{
 		ID:          mv.ID,
-		Title:       sql.NullString{String: mv.Author, Valid: true},
+		Title:       sql.NullString{String: mv.Title, Valid: true},
 		Slug:        sql.NullString{String: mv.Slug, Valid: true},
 		Description: sql.NullString{String: mv.Description, Valid: true},
 		Producer:    sql.NullString{String: mv.Producer, Valid: true},
