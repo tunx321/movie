@@ -40,8 +40,8 @@ func NewHandler(service MovieService) *Handler{
 
 
 func (h *Handler) mapRoutes(){
-	h.Router.HandleFunc("/hello", func (w http.ResponseWriter, r *http.Request){
-		fmt.Fprint(w, "Hello World")
+	h.Router.HandleFunc("/alive", func (w http.ResponseWriter, r *http.Request){
+		fmt.Fprint(w, "I am alive")
 	}  )
 	h.Router.HandleFunc("/api/v1/movie", JWTAuth(h.CreateMovie)).Methods("POST")
 	h.Router.HandleFunc("/api/v1/movie/{id}", h.GetMovie).Methods("GET")
